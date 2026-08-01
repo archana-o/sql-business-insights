@@ -1,0 +1,45 @@
+WITH touches  as (
+SELECT
+      o.order_id,
+                 o.customer_id,
+                 o.session_id,
+                 o.total,
+                 t.touched_at,
+                 t.channel,
+				 Row_number() OVER(PARTITION BY o.customer_id ORDER BY t.touched_at)      AS first_touch,
+                 Row_number() OVER(PARTITION BY o.customer_id ORDER BY t.touched_at DESC) AS last_touch
+	from ecom.orders o left join ecom.attribution_touches t on o.session_id=t.session_id
+	 where Lower(status) != 'cancelled' 
+	order by o.customer_id
+ ),
+first_touch as (
+ select 
+        'First Touch'   as Attribution_Model,
+		sum(total)    as Revenue,
+		count(order_id)   as Orders,
+		coalesce(channel,'Direct')           as channel 
+		from touches
+		where first_touch=1
+		group by channel
+
+		),
+last_touch as (
+       select 
+	    'Last Touch' as AttributionModel,
+        sum(total)    as Revenue,
+		count(order_id)   as Orders,
+		coalesce(channel,'Direct')           as channel 
+		from touches
+		where last_touch=1
+		group by channel
+
+)
+select *, 
+     revenue*100.00 ::numeric/ sum(revenue) over()  as share_of_revenue
+	 from first_touch ft 
+
+union
+select * ,
+     revenue*100.00::numeric/ sum(revenue) over() as share_of_revenue
+	 from last_touch ft 
+order by channel
