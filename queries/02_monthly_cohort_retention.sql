@@ -39,7 +39,7 @@ SELECT
 	  m1_retention,
 	  m2_retention,
 	  m3_retention,
-	  m1_retention::numeric/cohort_size   as m1_retention_rate,
-	  m2_retention::numeric/cohort_size   as m2_retention_rate,
-	  m3_retention::numeric/cohort_size   as m3_retention_rate
+	  m1_retention::numeric/nullif(cohort_size,0)  as m1_retention_rate,
+	  m2_retention::numeric/nullif(cohort_size,0)   as m2_retention_rate,
+	  m3_retention::numeric/nullif(cohort_size,0)   as m3_retention_rate
 from retention_summary
