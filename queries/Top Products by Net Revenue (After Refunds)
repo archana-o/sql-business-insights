@@ -1,11 +1,10 @@
-
 with product_revenue as (
         select 
                   p.product_id                                                             as product_id,
 	              p.product_name                                                           as product_name,
 	              c.category_name                                                          as category,
 				  sum(oi.line_total)                                                       as gross_revenue,
-				  count(oi.order_id)                                                       as orders_count,
+				  count(distinct oi.order_id)                                                       as orders_count,
 				  sum(oi.qty)                                                              as units_sold
 				  
 				 
@@ -13,18 +12,18 @@ with product_revenue as (
 	  join ecom.categories c on p.category_id=c.category_id
 	  join ecom.product_variants pv on p.product_id=pv.product_id
 	  join ecom.order_items oi on oi.variant_id=pv.variant_id
+	  join ecom.orders o on o.order_id=oi.order_id
+	  where o.payment_status='paid'
 	  group by p.product_id,p.product_name,c.category_name
 	  ),
-product_returns as (
-select 
-       p.product_id, 
-	   pv.variant_id, 
-	   count(ri.variant_id)        as   returns_count
-
-from ecom.products p 
-join ecom.product_variants pv on p.product_id=pv.product_id
-join ecom.return_items ri on pv.variant_id=ri.variant_id
-group by p.product_id,pv.variant_id
+product_returns AS (
+    SELECT
+    pv.product_id,
+    SUM(ri.qty) AS return_qty
+FROM ecom.return_items ri
+JOIN ecom.product_variants pv
+    ON ri.variant_id = pv.variant_id
+GROUP BY pv.product_id
 ),
 product_refunds as (
   select 
@@ -35,7 +34,9 @@ ecom.product_variants pv on p.product_id=pv.product_id
 join ecom.order_items oi on oi.variant_id=pv.variant_id
 join ecom.refunds r on  r.order_id=oi.order_id
 group by p.product_id
-		)
+
+)
+		
 select
       prev. product_id,
 	  prev.product_name,
@@ -43,12 +44,13 @@ select
 	  prev.gross_revenue,
 	  prev.orders_count,
 	  prev.units_sold,
-	  prtn.returns_count,
-	  prtn.returns_count ::numeric / nullif(prev.orders_count,0)                      as  return_rate,
-	  pref.refund_amount,
-	  gross_revenue-refund_amount                                                      as net_revenue
+	  COALESCE(prtn.return_qty, 0) AS returns_count,
+	  coalesce(prtn.return_qty ::numeric *100.00 / nullif(prev.units_sold,0)   ,0)                   as  return_rate,
+	  COALESCE(pref.refund_amount, 0) AS refund_amount,
+	  gross_revenue-COALESCE(pref.refund_amount, 0)                                                      as net_revenue
 from 
-   product_revenue prev join  product_returns prtn on prev.product_id=prtn.product_id
-   JOIN
+   product_revenue prev 
+   left join  product_returns prtn on prev.product_id=prtn.product_id
+  left JOIN
    product_refunds pref on pref.product_id=prtn.product_id
    order by net_revenue desc
