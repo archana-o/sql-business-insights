@@ -35,11 +35,11 @@ last_touch as (
 
 )
 select *, 
-     revenue*100.00 ::numeric/ sum(revenue) over()  as share_of_revenue
+     revenue*100.00 ::numeric/ nullif(sum(revenue) over(),0)  as share_of_revenue
 	 from first_touch ft 
 
 union
 select * ,
-     revenue*100.00::numeric/ sum(revenue) over() as share_of_revenue
+     revenue*100.00::numeric/ nullif(sum(revenue) over(),0) as share_of_revenue
 	 from last_touch ft 
 order by channel
