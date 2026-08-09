@@ -13,8 +13,8 @@ group by sc.channel
 )
 select
  *,
- add_to_cart_sessions::numeric *100.00/product_view_sessions         as view_to_cart_rate,
- begin_checkout_sessions::numeric *100.00/ add_to_cart_sessions      as cart_to_checkout_rate,
- purchase_sessions::numeric  *100.00/begin_checkout_sessions         as checkout_to_purchase_rate,
- purchase_sessions ::numeric *100.00/sessions                        as session_to_purchase_rate
+ add_to_cart_sessions::numeric *100.00/nullif(product_view_sessions,0)         as view_to_cart_rate,
+ begin_checkout_sessions::numeric *100.00/ nullif(add_to_cart_sessions ,0)     as cart_to_checkout_rate,
+ purchase_sessions::numeric  *100.00/nullif(begin_checkout_sessions ,0)        as checkout_to_purchase_rate,
+ purchase_sessions ::numeric *100.00/nullif(sessions,0)                        as session_to_purchase_rate
  from funnel
