@@ -1,3 +1,11 @@
+-- Q10: How does revenue attribution change between first-touch and last-touch marketing channels?
+-- Owner: Archana
+-- Last updated: 2026-08-10
+-- Sanity check: Total revenue under first_touch equals total under last_touch equals
+                 total non-cancelled revenue in ecom.orders, within 0.5%. -> confirmed
+
+
+
 WITH touches  as (
 SELECT
       o.order_id,
