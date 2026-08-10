@@ -1,3 +1,8 @@
+-- Q5: Which product categories generate the most sales, and which categories have the highest return rates?
+-- Owner: Archana
+-- Last updated: 2026-08-10
+-- Sanity check: return_rate_pct ∈ [0, 100] -> confirmed
+
 
 with category_sales as 
 (
