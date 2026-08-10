@@ -1,3 +1,9 @@
+-- Q1: Daily Business Summary + DoD / Same-Weekday WoW Comparisons
+-- Owner: Archana  |  Last updated: 2026-08-10
+-- Sanity check: paid_order_rate between 0 and 1 on every row;
+-- sum(orders) across all days equals count(*) of ecom.orders for the same window.
+
+
 with ordersummary as(
 select 
        date_trunc('day',created_at::timestamp)                                                                                      as ordered_date,
