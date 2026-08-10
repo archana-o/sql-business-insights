@@ -1,3 +1,8 @@
+-- Q9: How frequently do customers make repeat purchases, and how long does it take them to place their next order?
+-- Owner: Archana
+-- Last updated: 2026-08-10
+-- Sanity check: days_to_next_order >= 0 on every row. median <= p90 in the summary -> confirmed
+
 
 with order_summary as (
 select 
