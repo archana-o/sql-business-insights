@@ -1,3 +1,9 @@
+-- Q8: How is customer lifetime value distributed across customers, and which LTV segments contribute the most revenue?
+-- Owner: Archana
+-- Last updated: 2026-08-10
+-- Sanity check: sum(total_revenue) across all customers equals revenue from ecom.orders (excluding cancelled),
+                 within 0.5%. ltv_bucket_share_of_revenue summed across distinct buckets equals 1.0 -> confirmed
+
 
 with customer_ltv as (
 SELECT
