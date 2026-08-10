@@ -1,3 +1,10 @@
+-- Q2: What is the customer retention rate for the 1st, 2nd, and 3rd month after signup?
+-- Owner: Archana
+-- Last updated: 2026-08-10
+-- Sanity check: All retention rates in [0, 1] -> confirmed
+
+
+
 with customer_signup as (
       select 
 	        customer_id,
