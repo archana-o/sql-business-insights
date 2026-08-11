@@ -52,7 +52,7 @@ I would investigate why customers are not returning after their first few purcha
 
 ## Insight 3 — Payment Failure Analysis
 
-**SQL Query:** [View Payment Failure Analysis SQL](queries/Payment%20Failure%20Analysis%20%28Method%20%C3%97%20Top%20Error%20Code%29)
+**SQL Query:** [View Payment Failure Analysis SQL](queries/06_PaymentFailureAnalysis.sql)
 
 ### 1. What I observed
 
@@ -87,7 +87,7 @@ I would also compare successful versus failed UPI attempts to estimate the poten
 
 ## Insight 4 — Delivery Performance
 
-**SQL Query:** [View Delivery SLA Breach SQL](queries/Delivery%20SLA%20Breach%20by%20Carrier%20%C3%97%20Shipping%20Method)
+**SQL Query:** [View Delivery SLA Breach SQL](queries/07_Delivery_SLA_BreachbyCarrier_ShippingMethod.sql)
 
 ### 1. What I observed
 
@@ -119,7 +119,7 @@ I would also compare the cost of using EcomExpress against better-performing car
 
 ## Insight 5 — Customer Repeat Purchase Behavior
 
-**SQL Query:** [View Repeat Purchase Interval SQL](queries/Repeat%20Purchase%20Interval)
+**SQL Query:** [View Repeat Purchase Interval SQL](queries/09_Repeat_Purchase_Interval.sql)
 
 ### 1. What I observed
 
