@@ -6,7 +6,7 @@ This project contains **10 SQL business analyses** performed on an ecommerce dat
 
 Each query focuses on a different business area, including sales, customer behavior, marketing, product performance, payments, shipping, and customer lifetime value.
 
-🔗 **Detailed Project Documentation:** [Notion](https://tungsten-tuck-a3f.notion.site/What-10-SQL-Queries-Told-Me-About-This-Business-3b9cd9dc106a800c86dac76a00ae639b?source=copy_link)
+🔗 **Detailed Project Documentation:** [Notion](https://tungsten-tuck-a3f.notion.site/What-10-SQL-Queries-Told-Me-About-This-Business-3b9cd9dc106a800c86dac76a00ae639b)
 
 🔗 **Connect with me:** [LinkedIn](https://www.linkedin.com/in/archana-o-0b6862354)
 
