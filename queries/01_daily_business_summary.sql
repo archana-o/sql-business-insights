@@ -11,7 +11,7 @@ select
 	   count(*)                                                                                                                       as orders,
 	   sum(total)/count(*)                                                                                                            as AOV,
 	   sum(case when payment_status='paid' then 1 else 0 end) *100.00/ nullif(count(*) ,0)                                                      as paid_order_rate,
-	   sum (case when status='cancelled' then 1 else 0 end) * 100.00/nullif(count(*),0)                                                       as cancelled_order_rate
+	   sum (case when lower(status)='cancelled' then 1 else 0 end) * 100.00/nullif(count(*),0)                                                       as cancelled_order_rate
 from ecom.orders 
 group by date_trunc('day',created_at::timestamp)
 order by date_trunc('day',created_at::timestamp) desc
