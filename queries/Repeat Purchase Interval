@@ -4,6 +4,24 @@
 -- Sanity check: days_to_next_order >= 0 on every row. median <= p90 in the summary -> confirmed
 
 
+
+
+
+----1.. Rowlevel----------------
+select 
+       customer_id                                                                                                        as customer_id,
+       order_id                                                                                                            as  order_id,
+	   date(created_at)                                                                                                          as order_date,
+	   lead(date(created_at)) over(partition by customer_id order by customer_id,created_at)                                     as next_order_date,
+	   lead(date(created_at)) over(partition by customer_id order by customer_id,created_at) ::date - created_at::date          as  days_to_next_order
+   from  ecom.orders 
+   
+   where Lower(status) != 'cancelled'
+   order by customer_id  
+
+
+---------2. summary-----------------
+
 with order_summary as (
 select 
        customer_id                                                                                                        as customer_id,
