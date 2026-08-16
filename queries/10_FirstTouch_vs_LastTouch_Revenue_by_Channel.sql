@@ -6,48 +6,90 @@
 
 
 
-WITH touches  as (
-SELECT
-      o.order_id,
-                 o.customer_id,
-                 o.session_id,
-                 o.total,
-                 t.touched_at,
-                 t.channel,
-				 Row_number() OVER(PARTITION BY o.customer_id ORDER BY t.touched_at)      AS first_touch,
-                 Row_number() OVER(PARTITION BY o.customer_id ORDER BY t.touched_at DESC) AS last_touch
-	from ecom.orders o left join ecom.attribution_touches t on o.session_id=t.session_id
-	 where Lower(status) != 'cancelled' 
-	order by o.customer_id
- ),
-first_touch as (
- select 
-        'First Touch'   as Attribution_Model,
-		sum(total)    as Revenue,
-		count(order_id)   as Orders,
-		coalesce(channel,'Direct')           as channel 
-		from touches
-		where first_touch=1
-		group by channel
+WITH touches AS (
+    SELECT
+        o.order_id,
+        o.total,
+        t.touched_at,
+        t.channel,
 
-		),
-last_touch as (
-       select 
-	    'Last Touch' as AttributionModel,
-        sum(total)    as Revenue,
-		count(order_id)   as Orders,
-		coalesce(channel,'Direct')           as channel 
-		from touches
-		where last_touch=1
-		group by channel
+        ROW_NUMBER() OVER (
+            PARTITION BY o.order_id
+            ORDER BY t.touched_at ASC NULLS LAST
+        ) AS first_touch,
 
+        ROW_NUMBER() OVER (
+            PARTITION BY o.order_id
+            ORDER BY t.touched_at DESC NULLS LAST
+        ) AS last_touch
+
+    FROM ecom.orders o
+
+    LEFT JOIN ecom.attribution_touches t
+        ON o.session_id = t.session_id
+        AND t.touched_at <= o.created_at
+
+    WHERE LOWER(o.status) <> 'cancelled'
+),
+
+first_touch AS (
+    SELECT
+        'first_touch' AS attribution_model,
+        COALESCE(channel, 'direct') AS channel,
+        SUM(total) AS revenue,
+        COUNT(order_id) AS orders
+
+    FROM touches
+
+    WHERE first_touch = 1
+
+    GROUP BY
+        COALESCE(channel, 'direct')
+),
+
+last_touch AS (
+    SELECT
+        'last_touch' AS attribution_model,
+        COALESCE(channel, 'direct') AS channel,
+        SUM(total) AS revenue,
+        COUNT(order_id) AS orders
+
+    FROM touches
+
+    WHERE last_touch = 1
+
+    GROUP BY
+        COALESCE(channel, 'direct')
+),
+
+combined AS (
+    SELECT *
+    FROM first_touch
+
+    UNION ALL
+
+    SELECT *
+    FROM last_touch
 )
-select *, 
-     revenue*100.00 ::numeric/ nullif(sum(revenue) over(),0)  as share_of_revenue
-	 from first_touch ft 
 
-union
-select * ,
-     revenue*100.00::numeric/ nullif(sum(revenue) over(),0) as share_of_revenue
-	 from last_touch ft 
-order by channel
+SELECT
+    attribution_model,
+    channel,
+    revenue,
+    orders,
+
+    ROUND(
+        100.0 * revenue
+        / NULLIF(
+            SUM(revenue) OVER (
+                PARTITION BY attribution_model
+            ),
+            0
+        ),
+        2
+    ) AS share_of_revenue
+
+FROM combined
+
+ORDER BY
+    revenue DESC;
