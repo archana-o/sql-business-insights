@@ -5,59 +5,88 @@
                   from ecom.order_items for the same window, within 0.5%-> confirmed
 
 
-with product_revenue as (
-        select 
-                  p.product_id                                                             as product_id,
-	              p.product_name                                                           as product_name,
-	              c.category_name                                                          as category,
-				  sum(oi.line_total)                                                       as gross_revenue,
-				  count(distinct oi.order_id)                                                       as orders_count,
-				  sum(oi.qty)                                                              as units_sold
-				  
-				 
-      from ecom.products p 
-	  join ecom.categories c on p.category_id=c.category_id
-	  join ecom.product_variants pv on p.product_id=pv.product_id
-	  join ecom.order_items oi on oi.variant_id=pv.variant_id
-	  join ecom.orders o on o.order_id=oi.order_id
-	  where o.payment_status='paid'
-	  group by p.product_id,p.product_name,c.category_name
-	  ),
+WITH product_revenue AS (
+    SELECT
+        p.product_id,
+        p.product_name,
+        c.category_name AS category,
+        SUM(oi.line_total) AS gross_revenue,
+        COUNT(DISTINCT oi.order_id) AS orders_count,
+        SUM(oi.qty) AS units_sold
+    FROM ecom.orders o
+    JOIN ecom.order_items oi
+        ON o.order_id = oi.order_id
+    JOIN ecom.product_variants v
+        ON oi.variant_id = v.variant_id
+    JOIN ecom.products p
+        ON v.product_id = p.product_id
+    JOIN ecom.categories c
+        ON p.category_id = c.category_id
+    WHERE o.payment_status = 'paid'
+    GROUP BY
+        p.product_id,
+        p.product_name,
+        c.category_name
+),
+
 product_returns AS (
     SELECT
-    pv.product_id,
-    SUM(ri.qty) AS return_qty
-FROM ecom.return_items ri
-JOIN ecom.product_variants pv
-    ON ri.variant_id = pv.variant_id
-GROUP BY pv.product_id
-),
-product_refunds as (
-  select 
-        p.product_id,
-	    sum(r.amount) as refund_amount
-from ecom.products p join 
-ecom.product_variants pv on p.product_id=pv.product_id
-join ecom.order_items oi on oi.variant_id=pv.variant_id
-join ecom.refunds r on  r.order_id=oi.order_id
-group by p.product_id
+        v.product_id,
+        SUM(ri.qty) AS returns_count,
 
+        SUM(
+            ri.qty *
+            COALESCE(pr.sale_price, pr.list_price)
+        ) AS refund_amount
+
+    FROM ecom.return_requests rr
+    JOIN ecom.return_items ri
+        ON rr.return_id = ri.return_id
+    JOIN ecom.orders o
+        ON rr.order_id = o.order_id
+    JOIN ecom.product_variants v
+        ON ri.variant_id = v.variant_id
+    JOIN ecom.prices pr
+        ON ri.variant_id = pr.variant_id
+
+    WHERE o.payment_status = 'paid'
+
+    GROUP BY
+        v.product_id
 )
-		
-select
-      prev. product_id,
-	  prev.product_name,
-	  prev.category,
-	  prev.gross_revenue,
-	  prev.orders_count,
-	  prev.units_sold,
-	  COALESCE(prtn.return_qty, 0) AS returns_count,
-	  coalesce(prtn.return_qty ::numeric *100.00 / nullif(prev.units_sold,0)   ,0)                   as  return_rate,
-	  COALESCE(pref.refund_amount, 0) AS refund_amount,
-	  gross_revenue-COALESCE(pref.refund_amount, 0)                                                      as net_revenue
-from 
-   product_revenue prev 
-   left join  product_returns prtn on prev.product_id=prtn.product_id
-  left JOIN
-   product_refunds pref on pref.product_id=prtn.product_id
-   order by net_revenue desc
+
+SELECT
+    pr.product_id,
+    pr.product_name,
+    pr.category,
+    pr.gross_revenue,
+    pr.orders_count,
+    pr.units_sold,
+
+    COALESCE(rt.returns_count, 0) AS returns_count,
+
+    ROUND(
+        COALESCE(rt.returns_count, 0) * 100.0
+        / NULLIF(pr.units_sold, 0),
+        2
+    ) AS return_rate,
+
+    ROUND(
+        COALESCE(rt.refund_amount, 0),
+        2
+    ) AS refund_amount,
+
+    ROUND(
+        pr.gross_revenue
+        - COALESCE(rt.refund_amount, 0),
+        2
+    ) AS net_revenue
+
+FROM product_revenue pr
+
+LEFT JOIN product_returns rt
+    ON pr.product_id = rt.product_id
+
+
+ORDER BY
+    net_revenue DESC;
