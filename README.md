@@ -43,6 +43,14 @@ Each query focuses on a different business area, including sales, customer behav
 | [`10_FirstTouch_vs_LastTouch_Revenue_by_Channel.sql`](queries/10_FirstTouch_vs_LastTouch_Revenue_by_Channel.sql) | How does revenue attribution change between first-touch and last-touch models? | Organic was the highest-performing channel, generating 111,902,213.06 in revenue and accounting for 39.56% of total revenue. Paid followed with 99,564,080.00 in revenue and a 35.20% revenue share.Referral, Email, and Affiliate contributed 12.15%, 7.13%, and 5.71% of revenue respectively. |
 
 ---
+## 📊 Visual Analysis
+
+The SQL results were also visualized to make key business insights easier to interpret and communicate.
+
+### 📈 Daily Business Performance
+
+This visualization shows daily business performance and helps identify significant changes in revenue, orders, and average order value.
+
 
 ## 🛠 How to Run
 
