@@ -49,9 +49,21 @@ The SQL results were also visualized to make key business insights easier to int
 
 ### 📈 Daily Business Performance
 
-This visualization shows daily business performance and helps identify significant changes in revenue, orders, and average order value.
+![Daily Business Summary](Charts/DailybusinessSummary.png)
 
+### 👥 Customer Cohort Retention
 
+![Customer Cohort Analysis](Charts/CohortAnalysis.png)
+
+### 💳 Payment Failure Analysis
+
+![Payment Failure Analysis](Charts/PaymentFailure.png)
+
+### 📣 Marketing Attribution
+
+![Marketing Attribution](Charts/AttributionComparison.png)
+
+---
 ## 🛠 How to Run
 
 ### Prerequisites
