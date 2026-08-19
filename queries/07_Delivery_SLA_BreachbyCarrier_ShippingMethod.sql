@@ -1,8 +1,7 @@
 -- Q7: Which shipping carriers and methods deliver orders reliably, and where are delivery delays most common?
 -- Owner: Archana
 -- Last updated: 2026-08-10
--- Sanity check: avg_delivery_days <= p90_delivery_days on every row 
-                 .late_rate ∈ [0, 1] -> confirmed
+-- Sanity check: avg_delivery_days <= p90_delivery_days on every row .late_rate ∈ [0, 1] -> confirmed
 
 with carrier_summary as (
   SELECT
