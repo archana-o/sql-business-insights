@@ -1,9 +1,7 @@
 -- Q3: How does the conversion funnel perform across different marketing channels?
 -- Owner: Archana
 -- Last updated: 2026-08-10
--- Sanity check: Every rate ∈ [0, 1]. 
-                 Stage counts are monotonically non-increasing per channel: sessions >= product_view_sessions >= add_to_cart_sessions >= 
-                  begin_checkout_sessions >= purchase_sessions -> confirmed
+-- Sanity check: Every rate ∈ [0, 1]. Stage counts are monotonically non-increasing per channel: sessions >= product_view_sessions >= add_to_cart_sessions >= begin_checkout_sessions >= purchase_sessions -> confirmed
 
 with funnel as(
 select 
