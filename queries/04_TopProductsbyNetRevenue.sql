@@ -1,8 +1,7 @@
 -- Q4: Which products are driving revenue, and how do returns and refunds affect their net revenue?
 -- Owner: Archana
 -- Last updated: 2026-08-10
--- Sanity check: sum(gross_revenue) across all products equals sum(qty * unit_price) 
-                  from ecom.order_items for the same window, within 0.5%-> confirmed
+-- Sanity check: sum(gross_revenue) across all products equals sum(qty * unit_price) from ecom.order_items for the same window, within 0.5%-> confirmed
 
 
 WITH product_revenue AS (
