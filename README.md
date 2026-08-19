@@ -13,7 +13,7 @@ The ER diagram below shows the structure of the ecommerce database and the relat
 ![Ecommerce ER Diagram](notes/ER%20diagram.jpg)
 
 
-🔗 **Detailed Project Documentation:** [Notion](https://app.notion.com/p/What-10-SQL-Queries-Told-Me-About-This-Business-3b9cd9dc106a800c86dac76a00ae639b?source=copy_link)
+🔗 **Detailed Project Documentation:** [Notion](https://tungsten-tuck-a3f.notion.site/What-10-SQL-Queries-Told-Me-About-This-Business-3b9cd9dc106a800c86dac76a00ae639b)
 
 🔗 **Connect with me:** [LinkedIn](https://www.linkedin.com/in/archana-o-0b6862354)
 
