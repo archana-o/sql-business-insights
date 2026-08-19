@@ -17,7 +17,7 @@ select
    from  ecom.orders 
    
    where Lower(status) != 'cancelled'
-   order by customer_id  
+   order by customer_id  ;
 
 
 ---------2. summary-----------------
